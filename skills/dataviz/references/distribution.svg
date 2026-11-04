@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="1120" viewBox="0 0 360 560" role="img" aria-labelledby="distribution-title distribution-description">
+  <title id="distribution-title">Five synthetic durations: median 1 second, mean 4 seconds</title>
+  <desc id="distribution-description">Authored synthetic reference output. The observations in source order are 1, 1, 1, 1 and 16 seconds. Five dots show all five observations on a linear zero to 16 seconds axis; four coincident values at 1 second are stacked vertically for visibility. Stacking has no quantitative vertical meaning. Sample size n equals 5, sum equals 20 seconds, median equals the third sorted value, 1 second, and arithmetic mean equals 20 divided by 5, 4 seconds. A dashed median marker and solid mean marker distinguish the summaries without relying on color. No observations excluded, no weights, no bins, no inferred uncertainty or real-world timing claim. The complete value table and delivery notes accompany this SVG in the worked examples guide.</desc>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --page: #f6f4ed; --surface: #fffdf7; --ink: #202f2a; --muted: #526159;
+      --accent: #17634f; --rule: #767d76; --selection: #cbe7da;
+      --serif: Georgia, serif; --sans: system-ui, sans-serif;
+      --title: 32px; --heading: 24px; --body: 18px; --small: 16px;
+      --hairline: 1px; --stroke: 3px; --dash: 4 4; --page-width: 720px;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root { --page: #14231f; --surface: #1c2e27; --ink: #f0f0e7;
+        --muted: #b5c3b9; --accent: #8edac0; --rule: #82968b; --selection: #315a4a; }
+    }
+    svg { display: block; width: 100%; max-width: var(--page-width); height: auto;
+      margin-inline: auto; background: var(--page); }
+    ::selection { background: var(--selection); color: var(--ink); }
+    text { fill: var(--ink); font: var(--body) var(--sans); }
+    .heading { font: var(--title) var(--serif); }
+    .note { fill: var(--muted); font-size: var(--small); }
+    .axis { stroke: var(--rule); stroke-width: var(--hairline); fill: none; }
+    .observation { fill: var(--accent); }
+    .median { stroke: var(--ink); stroke-width: var(--stroke); stroke-dasharray: var(--dash); fill: none; }
+    .mean { stroke: var(--accent); stroke-width: var(--stroke); fill: none; }
+    .summary { font-size: var(--heading); }
+  </style>
+  <text class="heading" x="24" y="48"><tspan x="24">One long wait</tspan><tspan x="24" dy="38">shifts the mean</tspan></text>
+  <text class="note" x="24" y="114">Five synthetic durations · seconds</text>
+  <path class="median" d="M64.75 128V248"/>
+  <path class="mean" d="M115 128V248"/>
+  <g class="observation">
+    <circle cx="64.75" cy="140" r="6"/><circle cx="64.75" cy="160" r="6"/>
+    <circle cx="64.75" cy="180" r="6"/><circle cx="64.75" cy="200" r="6"/>
+    <circle cx="316" cy="200" r="6"/>
+  </g>
+  <text x="316" y="180" text-anchor="middle">16</text>
+  <path class="axis" d="M48 248H316 M48 248V254 M115 248V254 M182 248V254 M249 248V254 M316 248V254"/>
+  <g text-anchor="middle"><text x="48" y="278">0</text><text x="115" y="278">4</text><text x="182" y="278">8</text><text x="249" y="278">12</text><text x="316" y="278">16</text><text x="182" y="306">Seconds</text></g>
+  <text class="note" x="24" y="338">Each dot = one observation; n = 5.</text>
+  <path class="median" d="M24 374H64"/>
+  <text class="summary" x="80" y="382">Median = 1 second</text>
+  <path class="mean" d="M24 414H64"/>
+  <text class="summary" x="80" y="422">Mean = 4 seconds</text>
+  <text class="note" x="24" y="462">Source: authored synthetic fixture.</text>
+  <text class="note" x="24" y="488">Values: 1, 1, 1, 1, 16 seconds.</text>
+  <text class="note" x="24" y="514">Sum = 20 s; mean = 20 / 5 = 4 s.</text>
+  <text class="note" x="24" y="540">No exclusions or uncertainty estimates.</text>
+</svg>

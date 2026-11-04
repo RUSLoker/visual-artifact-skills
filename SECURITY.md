@@ -1,10 +1,13 @@
-# Pre-publication review
+# Security review
 
 This repository contains skill source files and a publishing tool.
-Keep server addresses, machine-specific configuration, reports, and input data outside the repository.
+Keep server addresses, machine-specific configuration, real reports, private inputs, store contents and generated evaluation evidence outside the repository and package.
+Authored fixtures and reference examples under `skills/*/references/` may ship only when explicitly labeled synthetic and free of real or private data, secrets, internal addresses and machine-specific paths.
 `.gitignore` prevents some accidental additions; it does not inspect file contents.
 
-Before every public push:
+## Repository release review
+
+Before every public push or package release:
 
 1. Inspect the full outgoing diff and file list.
 2. Scan working files with Gitleaks using `--redact`.
@@ -16,6 +19,12 @@ Run these checks locally. Keep reports and any findings out of the public reposi
 A clean scanner result does not prove that every possible secret is absent.
 If a real secret is found, stop publication and revoke it before correcting files and history.
 
-Review HTML pages separately before publishing them.
+## Page review
+
+Review each final HTML or SVG document before delivery and again after changes affecting its content. Inspect visible content, embedded datasets, metadata, comments, hidden elements, scripts and outgoing URLs. Remove secrets, personal details, internal addresses and unnecessary private data; review untrusted active content before opening or publishing it. Keep required value equivalents, sources and limitations with the document.
+
+Apply the final-page preview, measured contrast, keyboard, overflow and offline checks in `skills/hosted-artifacts/SKILL.md`. Record unavailable checks as UNVERIFIED. Repository scanner and package checks don't establish page readability or safety, and page review doesn't replace repository release review.
+
+Publication requires an explicit request. Check deployment prerequisites early only for that request. Local file delivery needs no server; an agent-side HTTP success doesn't establish that a user can reach a published page.
 The server does not provide password authentication; access depends on the network and external proxy.
 Published pages can run local JavaScript; CSP restricts network requests, forms, and frames.

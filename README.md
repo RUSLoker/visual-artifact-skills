@@ -9,7 +9,11 @@ A skill package for OmO: standalone report pages and clear data visualizations. 
 | `hosted-artifacts` | A report, plan, comparison, or set of questions would be clearer as a standalone HTML/SVG page, optionally published at a shareable URL. |
 | `dataviz` | A data question needs a table or chart with clear units, labels, and limitations. |
 
-`hosted-artifacts` handles the page and publication; `dataviz` chooses the visual representation. The skills use `frontend` or `data-scientist` when those are already installed. They are optional on other hosts: documents remain self-contained, and calculations use the available analysis tools.
+The initiating document workflow owns final composition and review; `hosted-artifacts` handles pages and requested publication, while `dataviz` chooses the visual representation. Preserve visual files, accessible summaries, complete value equivalents, sources, dates, units, transformations, assumptions, limitations and verification results through the handoff. The skills use `frontend` or `data-scientist` when those are already installed. They are optional on other hosts: documents remain self-contained, and calculations use the available analysis tools.
+
+Authored, explicitly labeled synthetic fixtures and reference examples may ship under `skills/*/references/`. See the [fixed evaluation protocol](skills/dataviz/references/evaluation.md) for cases and acceptance criteria. Real reports, private inputs and generated evaluation evidence stay outside the repository and package.
+
+Browse the [worked synthetic examples](skills/hosted-artifacts/references/examples.md): a filtered analytical report, a categorical comparison with a complete dense table, questions answered in chat, and an accessible distribution SVG.
 
 Users answer in chat. The package does not provide server-side form handling or send page interactions back to the agent.
 
@@ -38,7 +42,7 @@ Set these environment variables before running the CLI:
 | `HOST` | Server bind address. Defaults to the local loopback interface. |
 | `PORT` | Server port. Defaults to `29004`. |
 
-The operator configures machine-specific paths and network settings outside the package. Keep actual reports, input data, deployment configuration, and store contents out of Git and package archives.
+The operator configures machine-specific paths and network settings outside the package. Keep real reports, private inputs, deployment configuration, and store contents out of Git and package archives. The authored synthetic reference exception above doesn't permit private data.
 
 ## Publishing and viewing
 
@@ -72,15 +76,16 @@ The CLI accepts HTML. Deliver a standalone SVG as a file, or embed it in an HTML
 
 ## Page verification
 
-Before publishing:
+Review every final document before delivery, including local files that need no deployment:
 
 1. Verify facts, labels, and source links. Separate calculations from assumptions and state the data date.
-2. Open the page at desktop and phone widths, in light and dark themes. Check wrapping, tables, labels, and keyboard access.
-3. Confirm that styles, spacing, colors, fonts, and graphics work independently of a host theme.
-4. Review HTML, SVG, embedded data, metadata, and scripts for secrets and personal information. Remove unnecessary data before publication.
-5. After publication, verify the returned URL and the user's access to it.
+2. Preview at 375 x 812 and 1280 x 900 CSS pixels, each in light and dark, unless the request sets other sizes. Record actual dimensions, themes, screenshots and PASS, FAIL or UNVERIFIED per check. Check all content for overflow, clipped labels, overlap, usable table headers and keyboard access, including controls and table scrolling.
+3. Measure normal text contrast at least 4.5:1 and essential graphical distinctions at least 3:1 in both themes. These project thresholds don't establish complete accessibility compliance. Mark unavailable checks UNVERIFIED and inapplicable checks N/A with reasons.
+4. Confirm local styles and graphics work without a host theme. Reload offline, inspect outgoing requests, and check that content and local controls survive without required remote assets.
+5. Preserve the full handoff in the final composition. For dense tables, wrap or group content or use a labeled keyboard-accessible scroll region without page-level overflow. Any subset needs an explicit rule, visible omissions and access to full values; an all-values request forbids a subset. Reuse unchanged data checks, repeating affected checks only after inputs, transformations or values change.
+6. Follow `SECURITY.md`, section "Page review", for source and privacy inspection. Only requested publication needs early deployment prerequisites and a final check of the returned URL and user access. Agent-side HTTP success alone doesn't prove access; use file delivery if reachability remains unverified.
 
-The server has no built-in authentication. The operator controls access through the network and proxy. HTML can run local JavaScript; CSP restricts network requests, forms, and frames, but does not replace content review before publication. See `SECURITY.md` for source and package review requirements.
+The server has no built-in authentication. The operator controls access through the network and proxy. HTML can run local JavaScript; CSP restricts network requests, forms, and frames, but doesn't replace content review. `SECURITY.md`, section "Repository release review", separately covers public pushes and package releases.
 
 ## License
 
