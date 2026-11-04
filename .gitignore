@@ -1,0 +1,13 @@
+.env
+.env.*
+!.env.example
+node_modules/
+artifacts/
+reports/
+coverage/
+*.tgz
+*.pem
+*.key
+*.p12
+*.pfx
+.DS_Store

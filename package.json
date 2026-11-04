@@ -1,0 +1,19 @@
+{
+  "name": "visual-artifact-skills",
+  "version": "0.1.1",
+  "private": true,
+  "description": "Skills for publishing standalone artifacts and choosing clear data visualizations.",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RUSLoker/visual-artifact-skills.git"
+  },
+  "engines": { "node": ">=24" },
+  "files": ["skills/", "README.md", "SECURITY.md", "Dockerfile", "LICENSE"],
+  "scripts": {
+    "test": "node --test test/*.test.mjs"
+  },
+  "keywords": ["pi-package", "agent-skills"],
+  "pi": { "skills": ["./skills"] }
+}
