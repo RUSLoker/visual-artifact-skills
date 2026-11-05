@@ -1,6 +1,6 @@
 ---
 name: hosted-artifacts
-description: Create standalone HTML or SVG reports, plans, comparisons, and question pages when a user asks for a visual document, an artifact, or a shareable page; preview it and publish only when requested.
+description: Create standalone HTML or SVG reports, plans, comparisons, and question pages; preview and publish artifact requests on the configured server, then return a clickable URL, except for explicitly local or private material.
 ---
 
 # Hosted artifacts
@@ -9,11 +9,11 @@ See the [worked synthetic examples](references/examples.md) for complete local r
 
 Turn an answer into a document that can be read outside the chat. This skill is an original workflow adapter. It doesn't implement or port a Claude or Qwen feature.
 
-Use it for reports, plans, comparisons, decision documents, and pages that organize questions. Keep short answers in chat when a separate document adds no value. Writing a page doesn't authorize publication.
+Use it for reports, plans, comparisons, decision documents, and pages that organize questions. Keep short answers in chat when a separate document adds no value. An artifact request includes publication on the configured server and a final clickable URL by default. Don't ask for consent again for each configured publication. Honor explicitly local delivery and keep private material local.
 
 The workflow that initiates the document owns final composition and final-page review. When that is `hosted-artifacts`, keep that ownership while using `dataviz` for a visual. Preserve the full handoff: visual files, accessible summary, complete values table or text equivalent, sources, dates, units, transformations, assumptions, limitations, and verification results. Embed required companions or deliver them together with working references; a missing companion table makes the handoff incomplete.
 
-Only when publication is requested, check store configuration, service availability, and the user's network path early. Missing deployment prerequisites don't block an ordinary local document.
+For the default publication workflow, inspect local configuration, service availability, and the intended user address early. Follow the [publishing runbook](references/publishing.md). If the base URL is missing, inspect local configuration first, then ask once for the address the user can open. Continue composing while that answer is pending. Missing deployment prerequisites don't block an explicitly local document.
 
 ## Build the document
 
@@ -50,9 +50,11 @@ Use preview tools already available on the host. If rendering isn't available, s
 
 Review the source as well as the visible page. Inspect embedded datasets, SVG metadata, comments, hidden elements, scripts, and outgoing URLs. Remove credentials, personal details, internal addresses, and information unnecessary for the document. Don't load untrusted active content into a publication without reviewing it. Follow `SECURITY.md`, section "Page review"; its separate "Repository release review" applies to public repository pushes and package releases.
 
-## Publish when requested
+## Publish the artifact
 
-The bundled CLI requires Node.js 24 or newer. Run commands from the installed package root:
+The [publishing runbook](references/publishing.md) gives the Docker setup, reuse checks, publication commands, HTTP verification, and migration rules. Prefer its locally pinned built image with one persistent `omo-artifacts` service, an external store, host port `29004` mapped to `8080`, and restart policy `unless-stopped`. Keep that service running after delivery; remove short-lived publish containers with `--rm`.
+
+The bundled CLI requires Node.js 24 or newer. Its direct command contract, from the installed package root, is:
 
 ```sh
 node skills/hosted-artifacts/scripts/artifacts.mjs publish INPUT.html --slug lowercase-hyphenated-id --title TITLE
@@ -66,11 +68,11 @@ The operator must configure:
 | Setting | Contract |
 | --- | --- |
 | `ARTIFACTS_DIR` | Required absolute store path outside the package, source root, and Git root. |
-| `ARTIFACTS_BASE_URL` | Required for publication; an HTTP(S) base reachable by the user. Use `https://example.test` only as a documentation example. |
+| `ARTIFACTS_BASE_URL` | Required for publication; a user-facing HTTP(S) origin without credentials, path, query, or fragment. Use `https://example.test` only as a documentation example. |
 | `HOST` | Defaults to the local loopback interface. |
 | `PORT` | Defaults to `29004`. |
 
-For Docker, bind to all container interfaces and listen on `8080`, with an explicit host port mapping. Mount a separate store outside the source tree. Keep real reports, private inputs, store contents, and deployment configuration out of Git and package contents. Only authored, explicitly labeled synthetic fixtures and reference examples may ship as described in `SECURITY.md`.
+For Docker, bind to all container interfaces and listen on `8080`, with an explicit host port mapping. Mount input read-only and the separate store writable. The image runs as `node`; prepare store ownership for that image's UID and GID without root runtime or `chmod 777`. Keep real reports, private inputs, store contents, and deployment configuration out of Git and package contents. Only authored, explicitly labeled synthetic fixtures and reference examples may ship as described in `SECURITY.md`.
 
 Every publish creates an immutable revision. The latest page is at `/a/SLUG/`; a fixed revision is at `/a/SLUG/REVISION/`. The root catalogue derives its versions from the store. Existing revisions aren't overwritten. The server serves only known pages and routes and doesn't list directories.
 
@@ -78,6 +80,8 @@ The server has no authentication. Its operator controls access through the netwo
 
 ## Deliver the result
 
-For requested publication, check the actual URL returned. Confirm that the configured base and network path work for the user; an agent-side HTTP success doesn't establish user reachability. Send only user-reachable links. Use the revision URL when the user needs a stable reference and the latest URL when they need subsequent versions.
+Parse the CLI's JSON fields `latest` and `revision` exactly. Follow redirects and require HTTP 200, an HTML content type, and bytes or a hash matching the reviewed input before reporting publication success. Return a Markdown link using the actual verified URL. Use the revision URL for a stable reference and the latest URL for subsequent versions.
 
-If user access can't be established, mark link delivery incomplete and use an available file attachment mechanism instead of presenting an internal address as a working link. Local documents need no deployment: deliver the file and required companions directly. Report actual preview sizes and themes, check results, what remains unverified, and where the sources can be found. Keep follow-up answers in chat.
+A base supplied by the user is evidence of the intended user network. Server-side HTTP checks verify the service, not the user's browser; state that limit without requiring another consent or browser confirmation for each publication. If the requested base fails while a LAN or loopback check succeeds, preserve the requested base and ask once to confirm the intended address or forwarding route. Don't silently replace it with a private fallback or declare delivery from agent-local HTTP alone. Don't invent a public URL or substitute a local path, `show_html_page`, or an agent-only address for the final link. If publication or verification fails, report the failure and mark URL delivery incomplete; an interim file attachment doesn't complete the default delivery.
+
+For explicitly local or private material, deliver the file and required companions directly without publication. Report actual preview sizes and themes, check results, what remains unverified, and where the sources can be found. Keep follow-up answers in chat.

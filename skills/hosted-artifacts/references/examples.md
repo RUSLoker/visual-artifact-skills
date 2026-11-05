@@ -210,4 +210,6 @@ the package.
 6. Hand off the complete files and companions, source and transformation
    notes, limitations and actual PASS/FAIL/UNVERIFIED results. Use N/A with
    reasons for absent behavior, such as chart checks on the questions page.
-   Creating a file does not authorize publication.
+   An artifact request defaults to publication through `hosted-artifacts`;
+   explicitly local requests and private material stay local. Creating an
+   unsolicited file does not authorize publication.

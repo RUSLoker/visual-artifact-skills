@@ -25,6 +25,6 @@ Review each final HTML or SVG document before delivery and again after changes a
 
 Apply the final-page preview, measured contrast, keyboard, overflow and offline checks in `skills/hosted-artifacts/SKILL.md`. Record unavailable checks as UNVERIFIED. Repository scanner and package checks don't establish page readability or safety, and page review doesn't replace repository release review.
 
-Publication requires an explicit request. Check deployment prerequisites early only for that request. Local file delivery needs no server; an agent-side HTTP success doesn't establish that a user can reach a published page.
+Publication requires a user request. An artifact request includes publication on the configured server by default; don't ask for publication consent again for each artifact. Explicitly local requests and private material stay local. Creating an unsolicited file doesn't authorize publication. Check deployment prerequisites early for the publication workflow. Local file delivery needs no server; an agent-side HTTP success doesn't establish that a user can reach a published page.
 The server does not provide password authentication; access depends on the network and external proxy.
 Published pages can run local JavaScript; CSP restricts network requests, forms, and frames.
