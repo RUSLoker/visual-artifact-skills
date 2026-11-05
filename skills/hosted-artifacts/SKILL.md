@@ -52,7 +52,7 @@ Review the source as well as the visible page. Inspect embedded datasets, SVG me
 
 ## Publish the artifact
 
-The [publishing runbook](references/publishing.md) gives the Docker setup, reuse checks, publication commands, HTTP verification, and migration rules. Prefer its locally pinned built image with one persistent `omo-artifacts` service, an external store, host port `29004` mapped to `8080`, and restart policy `unless-stopped`. Keep that service running after delivery; remove short-lived publish containers with `--rm`.
+The [publishing runbook](references/publishing.md) gives the Docker setup, reuse checks, publication commands, HTTP verification, and migration rules. Select the configured profile there before applying service or port checks. An explicit `ARTIFACTS_PROFILE=legacy-compat-v1` uses its inspected external helpers, private backend, compatibility proxy, alternate catalogue path, and separate verification origin; follow that branch through delivery. For the default direct deployment described below, prefer a locally pinned built image with one persistent `omo-artifacts` service, an external store, host port `29004` mapped to `8080`, and restart policy `unless-stopped`. Keep configured persistent services running after delivery; remove short-lived publish containers with `--rm`.
 
 The bundled CLI requires Node.js 24 or newer. Its direct command contract, from the installed package root, is:
 

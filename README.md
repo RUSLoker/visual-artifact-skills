@@ -46,7 +46,7 @@ The operator configures machine-specific paths and network settings outside the 
 
 ## Publishing and viewing
 
-Follow the [publishing runbook](skills/hosted-artifacts/references/publishing.md) for concrete setup and publication commands. It uses the bundled CLI in a locally pinned Docker image, one persistent service named `omo-artifacts`, an external stable store, host port `29004` mapped to container port `8080`, and restart policy `unless-stopped`. Inspect and reuse a matching service; a conflicting service or occupied port needs resolution without overwriting configuration or stopping unrelated containers. Keep deployment configuration outside Git.
+Follow the [publishing runbook](skills/hosted-artifacts/references/publishing.md) for concrete setup and publication commands. Select the configured profile before service or port checks: `ARTIFACTS_PROFILE=legacy-compat-v1` uses inspected external helpers with a private backend, compatibility proxy, preserved legacy root, alternate catalogue, and separate verification origin. Follow that branch through delivery. The default direct deployment described below uses the bundled CLI in a locally pinned Docker image, one persistent service named `omo-artifacts`, an external stable store, host port `29004` mapped to container port `8080`, and restart policy `unless-stopped`. Inspect and reuse a matching service; a conflicting service or occupied port needs resolution without overwriting configuration or stopping unrelated containers. Keep deployment configuration outside Git.
 
 The direct CLI contract, from the installed package root, is:
 

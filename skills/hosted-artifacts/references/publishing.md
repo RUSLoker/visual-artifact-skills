@@ -2,7 +2,7 @@
 
 An artifact request defaults to publication on the configured server and a final clickable Markdown link. That request supplies the publication intent required by `SECURITY.md`; don't ask again for every configured publication. Explicitly local requests and private material use file delivery instead. Review the page before publication, including its hidden content and outgoing URLs. Ordinary page publication doesn't require the whole Git-history scan used for repository releases.
 
-Use the bundled `publish` and `serve` commands. Prefer a locally built, pinned image over changing the package installation. The target is one persistent Docker service named `omo-artifacts`, with host port `29004` mapped to container port `8080`, restart policy `unless-stopped`, and a stable store outside the package and all Git working trees. Leave this service running after delivery.
+Use the bundled `publish` and `serve` commands. Prefer a locally built, pinned image over changing the package installation. The default direct deployment is one persistent Docker service named `omo-artifacts`, with host port `29004` mapped to container port `8080`, restart policy `unless-stopped`, and a stable store outside the package and all Git working trees. An explicitly configured `legacy-compat-v1` profile uses the compatibility branch below instead. Leave the configured persistent services running after delivery.
 
 The commands below use Bash, Docker Engine, `curl`, `jq`, and standard host utilities. They describe an operator workflow, not permission to replace a conflicting deployment. Bind paths refer to the Docker daemon's host; run on that host rather than assuming a remote Docker context can mount client files. No extra package installation is needed when these tools are already available.
 
@@ -12,7 +12,7 @@ Inspect the operator's existing configuration before asking for an address or cr
 
 ```sh
 set -euo pipefail
-CONFIG_FILE="${XDG_CONFIG_HOME:-$HOME/.config}/omo-artifacts/publishing.env"
+CONFIG_FILE="${ARTIFACTS_CONFIG_FILE:-${XDG_CONFIG_HOME:-$HOME/.config}/omo-artifacts/publishing.env}"
 if [ -f "$CONFIG_FILE" ]; then
   . "$CONFIG_FILE"
 fi
@@ -32,7 +32,79 @@ If `ARTIFACTS_BASE_URL` remains missing after inspecting local configuration, as
 
 ## Inspect before creating anything
 
-Confirm the Docker daemon is available, then inspect both the named service and the host port:
+Select the configured profile before applying direct-mode service or port checks:
+
+```sh
+case "${ARTIFACTS_PROFILE:-}" in
+  '') printf 'Use the default direct deployment checks.\n' ;;
+  legacy-compat-v1) printf 'Use the configured compatibility helpers below.\n' ;;
+  *) printf 'Unsupported ARTIFACTS_PROFILE: %s\n' "$ARTIFACTS_PROFILE" >&2; exit 2 ;;
+esac
+```
+
+An unknown profile is an explicit error. Don't fall through to setup, overwrite a container, or change the profile to make a deployment pass.
+
+### Configured compatibility profile: legacy-compat-v1
+
+This branch reuses an existing, operator-configured compatibility deployment. It is not a migration or setup command. The bundled backend `omo-artifacts` listens on private container port `8080` without a published host port. The `omo-artifacts-compat` proxy owns host port `29004` and reaches the backend through their dedicated Docker network. Both services use `unless-stopped`. Accept this arrangement only when the configured inspector confirms the actual backend and proxy configuration.
+
+The proxy preserves the existing legacy root and report routes byte-for-byte. It forwards `/a/*` to the bundled server and exposes its catalogue at `ARTIFACTS_CATALOGUE_PATH`, normally `/artifacts/`, leaving `/` unchanged. The backend still implements publication and immutable revisions.
+
+In addition to the common values above, the trusted external configuration supplies:
+
+| Variable | Compatibility contract |
+| --- | --- |
+| `ARTIFACTS_PROFILE` | Exactly `legacy-compat-v1`. An unset or empty value selects the default direct deployment. |
+| `ARTIFACTS_INSPECT_COMMAND` | Absolute path to the deployment inspector; invoked with no arguments. |
+| `ARTIFACTS_PUBLISH_COMMAND` | Absolute path to the publisher; invoked with `INPUT.html SLUG TITLE`. |
+| `ARTIFACTS_VERIFY_COMMAND` | Absolute path to the verifier; invoked with `INPUT.html PUBLISH.json`. |
+| `ARTIFACTS_SERVICE`, `ARTIFACTS_PROXY_SERVICE` | Backend and compatibility proxy service names checked by the inspector. |
+| `ARTIFACTS_PROXY_IMAGE` | Immutable proxy image ID; `ARTIFACTS_IMAGE` remains the backend and publisher image ID. |
+| `ARTIFACTS_NETWORK`, `ARTIFACTS_BACKEND_URL` | Dedicated Docker network and private backend endpoint. |
+| `ARTIFACTS_HOST_PORT` | Proxy host port, `29004` for this profile. |
+| `ARTIFACTS_VERIFY_BASE_URL` | Agent-reachable HTTP(S) origin for checking the same publication paths through the compatibility proxy. It may differ from `ARTIFACTS_BASE_URL`. |
+| `ARTIFACTS_CATALOGUE_PATH` | Public catalogue path, separate from the preserved legacy root. |
+| `ARTIFACTS_OPERATIONS_DIR`, `ARTIFACTS_LEGACY_SNAPSHOT_DIR` | External helper directory and read-only legacy snapshot directory inspected by the helpers. |
+
+Read the configured helper files and the implementations they invoke before execution. Treat command values as executable file paths, not shell strings; don't use `eval`. The helpers load the external configuration themselves. When using a nonstandard configuration location, export `ARTIFACTS_CONFIG_FILE` so they load the same file:
+
+```sh
+export ARTIFACTS_CONFIG_FILE="$CONFIG_FILE"
+: "${ARTIFACTS_INSPECT_COMMAND:?Missing compatibility inspector}"
+: "${ARTIFACTS_PUBLISH_COMMAND:?Missing compatibility publisher}"
+: "${ARTIFACTS_VERIFY_COMMAND:?Missing compatibility verifier}"
+"$ARTIFACTS_INSPECT_COMMAND"
+```
+
+The inspector exits nonzero on a mismatch. Its JSON describes the profile, backend, proxy, store, network, restart policy, verification origin, and public origin. It checks immutable image IDs, runtime users and commands, running state, restart policies, private backend networking without published ports, the writable store mount, proxy port bindings, and read-only proxy root and legacy mounts. Keep machine-specific output outside Git. A failure stops publication; report it without recreating either service or falling back to the direct setup.
+
+Complete the HTML source review and preview checks in `../SKILL.md`. Inline required companions as described under "Publish the reviewed HTML" below. Then publish once through the configured wrapper:
+
+```sh
+set -euo pipefail
+INPUT_HTML="/absolute/path/to/reviewed-report.html"
+SLUG="reviewed-report"
+TITLE="Reviewed report"
+PUBLISH_JSON_FILE="$(mktemp)"
+trap 'rm -f -- "$PUBLISH_JSON_FILE"' EXIT
+"$ARTIFACTS_PUBLISH_COMMAND" "$INPUT_HTML" "$SLUG" "$TITLE" > "$PUBLISH_JSON_FILE"
+"$ARTIFACTS_VERIFY_COMMAND" "$INPUT_HTML" "$PUBLISH_JSON_FILE"
+LATEST_URL="$(jq -er '.latest | strings | select(length > 0)' "$PUBLISH_JSON_FILE")"
+REVISION_URL="$(jq -er '.revision | strings | select(length > 0)' "$PUBLISH_JSON_FILE")"
+printf '[Open the report](%s)\n' "$REVISION_URL"
+```
+
+The publisher runs the bundled CLI in the pinned backend image with `--rm`, `--network none`, a read-only input mount, and the shared writable store. Its stdout is the CLI JSON with exactly `latest` and `revision`; diagnostics go to stderr. Each successful invocation creates a revision. Keep that JSON for verification retries instead of republishing.
+
+The verifier requires both emitted URLs to use the configured public origin and `/a/` paths without a query or fragment. It requests those same paths at `ARTIFACTS_VERIFY_BASE_URL`, follows redirects, and requires HTTP 200, an HTML content type, and SHA-256 equality with the input for both responses. Its JSON contains `expectedHash`, `checks`, and `userBrowserVerified: false`; each check records the public URL, checked URL, final checked URL, status, content type, and hash. A nonzero exit leaves verification incomplete.
+
+Preserve the CLI's public URLs when the public origin cannot be reached from the server itself. If the user has confirmed that origin and its forwarding route, successful checks through the configured compatibility endpoint permit returning the emitted public link with an explicit agent-local verification statement. They do not verify external NAT reachability or the user's browser. If routing is unresolved, ask once as described below. Never replace the public origin with the local verification origin.
+
+After this branch, return the emitted public link and leave both persistent services running. Skip the direct deployment inspection, build, service creation, and direct publication/verification commands below. Use the migration section only for a separately approved migration.
+
+### Default direct deployment
+
+Only when `ARTIFACTS_PROFILE` is unset or empty, confirm the Docker daemon is available, then inspect both the named service and the host port:
 
 ```sh
 docker info
@@ -67,7 +139,7 @@ An existing published link may belong to a separate deployment or a legacy compa
 
 ## Build and pin once for a new setup
 
-Only use this branch when no matching service exists, the name and port are available, and the setup is intended. From the package root containing the existing `Dockerfile`:
+Only use this default direct deployment branch when no matching service exists, the name and port are available, and the setup is intended. From the package root containing the existing `Dockerfile`:
 
 ```sh
 docker build --tag visual-artifact-skills:local .
