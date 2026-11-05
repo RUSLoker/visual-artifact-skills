@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="description" content="An authored synthetic categorical comparison and a complete eight-column, forty-row values table.">
+  <title>Compare categories. Keep every value.</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --page: #f6f4ed; --surface: #fffdf7; --ink: #202f2a; --muted: #526159;
+      --accent: #17634f; --rule: #767d76; --selection: #cbe7da;
+      --s1: .25rem; --s2: .5rem; --s3: .75rem; --s4: 1rem;
+      --s6: 1.5rem; --s8: 2rem; --s12: 3rem; --s16: 4rem;
+      --body: 1.125rem; --small: 1rem; --h4: 1.25rem; --h3: 1.5rem;
+      --h2: 2rem; --h1: 3.5rem; --h1-min: 2.5rem;
+      --leading: 1.6; --heading-leading: 1.15; --serif: Georgia, serif;
+      --sans: system-ui, sans-serif; --measure: 65ch; --page-width: 70rem;
+      --dense-width: 64rem; --label-width: 18rem; --id-width: 3rem;
+      --hairline: 1px; --focus: 3px;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root { --page: #14231f; --surface: #1c2e27; --ink: #f0f0e7;
+        --muted: #b5c3b9; --accent: #8edac0; --rule: #82968b; --selection: #315a4a; }
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--page); color: var(--ink);
+      font: var(--body)/var(--leading) var(--sans); overflow-wrap: anywhere; }
+    ::selection { background: var(--selection); color: var(--ink); }
+    :focus-visible { outline: var(--focus) solid var(--accent); outline-offset: var(--s1); }
+    main { max-width: var(--page-width); margin-inline: auto; padding: var(--s8) var(--s6) var(--s12); }
+    header { padding-block: var(--s8); }
+    h1, h2, h3 { font-family: var(--serif); line-height: var(--heading-leading); font-weight: 400; }
+    h1 { font-size: clamp(var(--h1-min), 6vw, var(--h1)); max-width: 20ch; margin: 0 0 var(--s6); }
+    h2 { font-size: var(--h2); margin: 0 0 var(--s6); }
+    h3 { font-size: var(--h3); margin: var(--s8) 0 var(--s4); }
+    p { max-width: var(--measure); margin: 0 0 var(--s4); }
+    .note, caption, footer { font-size: var(--small); color: var(--muted); }
+    .note strong { color: var(--ink); }
+    section { border-top: var(--hairline) solid var(--rule); padding-block: var(--s12); }
+    .section-number { color: var(--accent); font: var(--small)/1 var(--sans); margin-right: var(--s4); }
+    .result { font-size: var(--h3); margin-bottom: var(--s6); }
+    .result strong { color: var(--accent); }
+    .table-scroll { max-width: 100%; overflow-x: auto; padding: var(--s1);
+      margin-block: var(--s6); scrollbar-color: var(--rule) var(--surface); }
+    table { width: 100%; border-collapse: collapse; text-align: left; font-variant-numeric: tabular-nums; }
+    caption { text-align: left; padding-bottom: var(--s4); }
+    th, td { border-bottom: var(--hairline) solid var(--rule); padding: var(--s3) var(--s2); vertical-align: top; }
+    thead th { background: var(--surface); font-weight: 600; }
+    tfoot { font-weight: 600; }
+    #dense-table { min-width: var(--dense-width); table-layout: fixed; }
+    .id-column { width: var(--id-width); }
+    .label-column { width: var(--label-width); }
+    #dense-table td:last-child, #dense-table th:last-child { text-align: right; }
+    footer { border-top: var(--hairline) solid var(--rule); padding-top: var(--s8); }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Compare categories. Keep every value.</h1>
+    <p>A categorical question needs clear words. A dense dataset needs room for every field. Neither needs an invented score.</p>
+    <p class="note">Authored reference output. All options, labels and values are <strong>synthetic</strong>. The two datasets are unrelated.</p>
+  </header>
+  <section aria-labelledby="options-heading">
+    <h2 id="options-heading"><span class="section-number">01</span>Keep unknown distinct</h2>
+    <p>Cedar supports export; Birch supports offline use. Cedar's support status is unknown, so this fixture cannot establish a complete preference.</p>
+    <div class="table-scroll" role="region" aria-label="Complete synthetic option comparison" tabindex="0">
+      <table id="options-table">
+        <caption>Synthetic categorical fixture · words, not scores</caption>
+        <thead><tr><th scope="col">Option</th><th scope="col">Export</th><th scope="col">Offline</th><th scope="col">Support</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Cedar</th><td>Yes</td><td>No</td><td>Unknown</td></tr>
+          <tr><th scope="row">Birch</th><td>No</td><td>Yes</td><td>Yes</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">Source: authored synthetic categorical fixture, transcribed directly. Unknown means no answer was supplied; it does not mean No. No numeric ranking, weighting or inferred feature is applied.</p>
+  </section>
+  <section aria-labelledby="dense-heading">
+    <h2 id="dense-heading"><span class="section-number">02</span>All 40 observations</h2>
+    <p class="result"><strong>820 units</strong> across 40 rows and all eight columns.</p>
+    <p id="dense-help">The complete table continues horizontally on narrow screens. Tab to its scroll region and use the left and right arrow keys to reach every column. Long labels wrap in full.</p>
+    <div class="table-scroll" role="region" aria-label="All 40 synthetic observations, eight columns" aria-describedby="dense-help" tabindex="0">
+      <table id="dense-table">
+        <caption>Synthetic dense fixture · January 2026 · no subset or excluded rows</caption>
+        <colgroup><col class="id-column"><col class="label-column"><col><col><col><col><col><col></colgroup>
+        <thead><tr><th scope="col">ID</th><th scope="col">Label</th><th scope="col">Region</th><th scope="col">Segment</th><th scope="col">Status</th><th scope="col">Period</th><th scope="col">Unit</th><th scope="col">Value</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">1</th><td>Synthetic observation 1: long descriptive label retained in full</td><td>South</td><td>Operations</td><td>Observed</td><td>2026-01</td><td>units</td><td>1</td></tr>
+          <tr><th scope="row">2</th><td>Synthetic observation 2: long descriptive label retained in full</td><td>North</td><td>Operations</td><td>Observed</td><td>2026-01</td><td>units</td><td>2</td></tr>
+          <tr><th scope="row">3</th><td>Synthetic observation 3: long descriptive label retained in full</td><td>South</td><td>Research</td><td>Observed</td><td>2026-01</td><td>units</td><td>3</td></tr>
+          <tr><th scope="row">4</th><td>Synthetic observation 4: long descriptive label retained in full</td><td>North</td><td>Operations</td><td>Observed</td><td>2026-01</td><td>units</td><td>4</td></tr>
+          <tr><th scope="row">5</th><td>Synthetic observation 5: long descriptive label retained in full</td><td>South</td><td>Operations</td><td>Unknown</td><td>2026-01</td><td>units</td><td>5</td></tr>
+          <tr><th scope="row">6</th><td>Synthetic observation 6: long descriptive label retained in full</td><td>North</td><td>Research</td><td>Observed</td><td>2026-01</td><td>units</td><td>6</td></tr>
+          <tr><th scope="row">7</th><td>Synthetic observation 7: long descriptive label retained in full</td><td>South</td><td>Operations</td><td>Observed</td><td>2026-01</td><td>units</td><td>7</td></tr>
+          <tr><th scope="row">8</th><td>Synthetic observation 8: long descriptive label retained in full</td><td>North</td><td>Operations</td><td>Observed</td><td>2026-01</td><td>units</td><td>8</td></tr>
+          <tr><th scope="row">9</th><td>Synthetic observation 9: long descriptive label retained in full</td><td>South</td><td>Research</td><td>Observed</td><td>2026-01</td><td>units</td><td>9</td></tr>
+          <tr><th scope="row">10</th><td>Synthetic observation 10: long descriptive label retained in full</td><td>North</td><td>Operations</td><td>Unknown</td><td>2026-01</td><td>units</td><td>10</td></tr>
+          <tr><th scope="row">11</th><td>Synthetic observation 11: long descriptive label retained in full</td><td>South</td><td>Operations</td><td>Observed</td><td>2026-01</td><td>units</td><td>11</td></tr>
+          <tr><th scope="row">12</th><td>Synthetic observation 12: long descriptive label retained in full</td><td>North</td><td>Research</td><td>Observed</td><td>2026-01</td><td>units</td><td>12</td></tr>
+          <tr><th scope="row">13</th><td>Synthetic observation 13: long descriptive label retained in full</td><td>South</td><td>Operations</td><td>Observed</td><td>2026-01</td><td>units</td><td>13</td></tr>
+          <tr><th scope="row">14</th><td>Synthetic observation 14: long descriptive label retained in full</td><td>North</td><td>Operations</td><td>Observed</td><td>2026-01</td><td>units</td><td>14</td></tr>
+          <tr><th scope="row">15</th><td>Synthetic observation 15: long descriptive label retained in full</td><td>South</td><td>Research</td><td>Unknown</td><td>2026-01</td><td>units</td><td>15</td></tr>
+          <tr><th scope="row">16</th><td>Synthetic observation 16: long descriptive label retained in full</td><td>North</td><td>Operations</td><td>Observed</td><td>2026-01</td><td>units</td><td>16</td></tr>
+          <tr><th scope="row">17</th><td>Synthetic observation 17: long descriptive label retained in full</td><td>South</td><td>Operations</td><td>Observed</td><td>2026-01</td><td>units</td><td>17</td></tr>
+          <tr><th scope="row">18</th><td>Synthetic observation 18: long descriptive label retained in full</td><td>North</td><td>Research</td><td>Observed</td><td>2026-01</td><td>units</td><td>18</td></tr>
+          <tr><th scope="row">19</th><td>Synthetic observation 19: long descriptive label retained in full</td><td>South</td><td>Operations</td><td>Observed</td><td>2026-01</td><td>units</td><td>19</td></tr>
+          <tr><th scope="row">20</th><td>Synthetic observation 20: long descriptive label retained in full</td><td>North</td><td>Operations</td><td>Unknown</td><td>2026-01</td><td>units</td><td>20</td></tr>
+          <tr><th scope="row">21</th><td>Synthetic observation 21: long descriptive label retained in full</td><td>South</td><td>Research</td><td>Observed</td><td>2026-01</td><td>units</td><td>21</td></tr>
+          <tr><th scope="row">22</th><td>Synthetic observation 22: long descriptive label retained in full</td><td>North</td><td>Operations</td><td>Observed</td><td>2026-01</td><td>units</td><td>22</td></tr>
+          <tr><th scope="row">23</th><td>Synthetic observation 23: long descriptive label retained in full</td><td>South</td><td>Operations</td><td>Observed</td><td>2026-01</td><td>units</td><td>23</td></tr>
+          <tr><th scope="row">24</th><td>Synthetic observation 24: long descriptive label retained in full</td><td>North</td><td>Research</td><td>Observed</td><td>2026-01</td><td>units</td><td>24</td></tr>
+          <tr><th scope="row">25</th><td>Synthetic observation 25: long descriptive label retained in full</td><td>South</td><td>Operations</td><td>Unknown</td><td>2026-01</td><td>units</td><td>25</td></tr>
+          <tr><th scope="row">26</th><td>Synthetic observation 26: long descriptive label retained in full</td><td>North</td><td>Operations</td><td>Observed</td><td>2026-01</td><td>units</td><td>26</td></tr>
+          <tr><th scope="row">27</th><td>Synthetic observation 27: long descriptive label retained in full</td><td>South</td><td>Research</td><td>Observed</td><td>2026-01</td><td>units</td><td>27</td></tr>
+          <tr><th scope="row">28</th><td>Synthetic observation 28: long descriptive label retained in full</td><td>North</td><td>Operations</td><td>Observed</td><td>2026-01</td><td>units</td><td>28</td></tr>
+          <tr><th scope="row">29</th><td>Synthetic observation 29: long descriptive label retained in full</td><td>South</td><td>Operations</td><td>Observed</td><td>2026-01</td><td>units</td><td>29</td></tr>
+          <tr><th scope="row">30</th><td>Synthetic observation 30: long descriptive label retained in full</td><td>North</td><td>Research</td><td>Unknown</td><td>2026-01</td><td>units</td><td>30</td></tr>
+          <tr><th scope="row">31</th><td>Synthetic observation 31: long descriptive label retained in full</td><td>South</td><td>Operations</td><td>Observed</td><td>2026-01</td><td>units</td><td>31</td></tr>
+          <tr><th scope="row">32</th><td>Synthetic observation 32: long descriptive label retained in full</td><td>North</td><td>Operations</td><td>Observed</td><td>2026-01</td><td>units</td><td>32</td></tr>
+          <tr><th scope="row">33</th><td>Synthetic observation 33: long descriptive label retained in full</td><td>South</td><td>Research</td><td>Observed</td><td>2026-01</td><td>units</td><td>33</td></tr>
+          <tr><th scope="row">34</th><td>Synthetic observation 34: long descriptive label retained in full</td><td>North</td><td>Operations</td><td>Observed</td><td>2026-01</td><td>units</td><td>34</td></tr>
+          <tr><th scope="row">35</th><td>Synthetic observation 35: long descriptive label retained in full</td><td>South</td><td>Operations</td><td>Unknown</td><td>2026-01</td><td>units</td><td>35</td></tr>
+          <tr><th scope="row">36</th><td>Synthetic observation 36: long descriptive label retained in full</td><td>North</td><td>Research</td><td>Observed</td><td>2026-01</td><td>units</td><td>36</td></tr>
+          <tr><th scope="row">37</th><td>Synthetic observation 37: long descriptive label retained in full</td><td>South</td><td>Operations</td><td>Observed</td><td>2026-01</td><td>units</td><td>37</td></tr>
+          <tr><th scope="row">38</th><td>Synthetic observation 38: long descriptive label retained in full</td><td>North</td><td>Operations</td><td>Observed</td><td>2026-01</td><td>units</td><td>38</td></tr>
+          <tr><th scope="row">39</th><td>Synthetic observation 39: long descriptive label retained in full</td><td>South</td><td>Research</td><td>Observed</td><td>2026-01</td><td>units</td><td>39</td></tr>
+          <tr><th scope="row">40</th><td>Synthetic observation 40: long descriptive label retained in full</td><td>North</td><td>Operations</td><td>Unknown</td><td>2026-01</td><td>units</td><td>40</td></tr>
+        </tbody>
+        <tfoot><tr><th scope="row" colspan="7">Total · all 40 observations</th><td>820</td></tr></tfoot>
+      </table>
+    </div>
+    <h3>Source and transformation</h3>
+    <p class="note">Authored synthetic dense fixture. For each integer i from 1 to 40, ID and value equal i. The label is “Synthetic observation i: long descriptive label retained in full”, replacing i with its number. Even IDs use North; odd IDs use South. IDs divisible by three use Research; others use Operations. IDs divisible by five have Unknown status; others have Observed status. Every period is 2026-01 and every unit is units.</p>
+    <p class="note">Values are supplied even where the categorical status is Unknown. All rows remain included. Total = 1 + 2 + … + 40 = 40 × 41 / 2 = 820 units. No rounding, joining, ranking or exclusions. January 2026 is a synthetic period, not a real observation date.</p>
+  </section>
+  <footer>
+    <p><strong>Limits:</strong> these fixtures demonstrate categorical distinctions and complete table delivery. No real product capability, measured population or preferred option is established.</p>
+    <p><strong>Delivery:</strong> keep the whole HTML with both tables, all labels, source construction and limitations. It uses embedded styles and no external assets or JavaScript. Before delivering a changed copy, verify every field, total, keyboard scroll region, theme, viewport and offline rendering.</p>
+  </footer>
+</main>
+</body>
+</html>

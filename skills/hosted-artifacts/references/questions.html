@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="description" content="Three authored synthetic planning questions, with numbered choices to answer in chat.">
+  <title>Plan the next draft</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --page: #f6f4ed; --surface: #fffdf7; --ink: #202f2a; --muted: #526159;
+      --accent: #17634f; --rule: #767d76; --selection: #cbe7da;
+      --s1: .25rem; --s2: .5rem; --s3: .75rem; --s4: 1rem;
+      --s6: 1.5rem; --s8: 2rem; --s12: 3rem; --s16: 4rem;
+      --body: 1.125rem; --small: 1rem; --h4: 1.25rem; --h3: 1.5rem;
+      --h2: 2rem; --h1: 3.5rem; --h1-min: 2.5rem;
+      --leading: 1.6; --heading-leading: 1.15; --serif: Georgia, serif;
+      --sans: system-ui, sans-serif; --mono: ui-monospace, monospace;
+      --measure: 65ch; --page-width: 58rem; --option-label: 16rem; --hairline: 1px;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root { --page: #14231f; --surface: #1c2e27; --ink: #f0f0e7;
+        --muted: #b5c3b9; --accent: #8edac0; --rule: #82968b; --selection: #315a4a; }
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--page); color: var(--ink);
+      font: var(--body)/var(--leading) var(--sans); overflow-wrap: anywhere; }
+    ::selection { background: var(--selection); color: var(--ink); }
+    main { max-width: var(--page-width); margin-inline: auto; padding: var(--s8) var(--s6) var(--s12); }
+    header { padding-block: var(--s8); }
+    h1, h2 { font-family: var(--serif); line-height: var(--heading-leading); font-weight: 400; }
+    h1 { font-size: clamp(var(--h1-min), 6vw, var(--h1)); max-width: 20ch; margin: 0 0 var(--s6); }
+    h2 { font-size: var(--h2); margin: 0 0 var(--s6); }
+    p { max-width: var(--measure); margin: 0 0 var(--s4); }
+    .note, footer { color: var(--muted); font-size: var(--small); }
+    .note strong { color: var(--ink); }
+    .questions { list-style: none; padding: 0; margin: 0; }
+    .questions > li, .reply { border-top: var(--hairline) solid var(--rule); padding-block: var(--s12); }
+    .number { color: var(--accent); font: var(--small)/1 var(--sans); margin-right: var(--s4); }
+    dl { margin: 0; }
+    dl > div { display: flex; flex-wrap: wrap; gap: var(--s2) var(--s6); padding-block: var(--s4); }
+    dt { flex: 0 1 var(--option-label); font-weight: 600; }
+    dd { flex: 1 1 var(--option-label); margin: 0; max-width: var(--measure); }
+    .reply strong { color: var(--accent); }
+    code { font-family: var(--mono); font-size: var(--body); }
+    .reply-example { padding: var(--s4) var(--s6); background: var(--surface); }
+    footer { border-top: var(--hairline) solid var(--rule); padding-top: var(--s8); }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Plan the next draft</h1>
+    <p>Three questions for a fictional document-planning exercise. Read the options here, then send your choices in chat.</p>
+    <p class="note">Authored reference output. This scenario and its options are <strong>synthetic</strong>; no actual reader preference is assumed.</p>
+  </header>
+  <ol class="questions" aria-label="Three questions to answer in chat">
+    <li>
+      <h2><span class="number">1.</span>What should lead?</h2>
+      <dl>
+        <div><dt>A · The conclusion</dt><dd>Open with the answer and put supporting evidence after it.</dd></div>
+        <div><dt>B · The comparison</dt><dd>Open with the options and the differences that matter to a decision.</dd></div>
+        <div><dt>C · The open questions</dt><dd>Open with what still needs an answer before a decision can be made.</dd></div>
+      </dl>
+    </li>
+    <li>
+      <h2><span class="number">2.</span>How much detail?</h2>
+      <dl>
+        <div><dt>A · A brief read</dt><dd>Keep the narrative short while retaining required values, sources and limitations.</dd></div>
+        <div><dt>B · A worked explanation</dt><dd>Include calculations and the reasoning behind the chosen presentation.</dd></div>
+      </dl>
+    </li>
+    <li>
+      <h2><span class="number">3.</span>How will it be used?</h2>
+      <dl>
+        <div><dt>A · A local file</dt><dd>Deliver a self-contained document that can be opened offline.</dd></div>
+        <div><dt>B · A shareable page</dt><dd>Discuss publication and user access before arranging a reachable link.</dd></div>
+      </dl>
+    </li>
+  </ol>
+  <section class="reply" aria-labelledby="reply-heading">
+    <h2 id="reply-heading">Reply in chat</h2>
+    <p><strong>Use the question numbers and option letters.</strong> Add any qualifications in your own words.</p>
+    <p class="reply-example"><code>1B, 2A, 3A</code></p>
+    <p>For this example: lead with the comparison, keep it brief and deliver a local file.</p>
+    <p class="note">This is a reading page. Nothing is selected, collected or submitted here. Send your answer in the chat where the document was shared.</p>
+  </section>
+  <footer>
+    <p><strong>Source:</strong> authored synthetic planning scenario. The options are prompts, not measured facts; no calculation, weighting or scoring is applied.</p>
+    <p><strong>Delivery:</strong> keep this complete HTML as a companion to the conversation. It has no form, submit button, JavaScript, external assets or feedback service. A choice about a shareable page is not a publication action.</p>
+  </footer>
+</main>
+</body>
+</html>

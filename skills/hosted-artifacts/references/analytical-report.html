@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="description" content="An authored synthetic report demonstrating weighted rates, missing months and synchronized local year filtering.">
+  <title>Rates, gaps and yearly totals</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --page: #f6f4ed; --surface: #fffdf7; --ink: #202f2a; --muted: #526159;
+      --accent: #17634f; --rule: #767d76; --selection: #cbe7da;
+      --s1: .25rem; --s2: .5rem; --s3: .75rem; --s4: 1rem;
+      --s6: 1.5rem; --s8: 2rem; --s12: 3rem; --s16: 4rem;
+      --body: 1.125rem; --small: 1rem; --h4: 1.25rem; --h3: 1.5rem;
+      --h2: 2rem; --h1: 3.5rem; --h1-min: 2.5rem;
+      --leading: 1.6; --heading-leading: 1.15; --serif: Georgia, serif;
+      --sans: system-ui, sans-serif; --measure: 65ch; --page-width: 70rem;
+      --grid-min: 24rem; --chart-width: 32rem; --table-min: 32rem; --control: 3rem;
+      --hairline: 1px; --stroke: 3px; --focus: 3px; --radius: .25rem;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root { --page: #14231f; --surface: #1c2e27; --ink: #f0f0e7;
+        --muted: #b5c3b9; --accent: #8edac0; --rule: #82968b; --selection: #315a4a; }
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--page); color: var(--ink);
+      font: var(--body)/var(--leading) var(--sans); overflow-wrap: anywhere; }
+    ::selection { background: var(--selection); color: var(--ink); }
+    :focus-visible { outline: var(--focus) solid var(--accent); outline-offset: var(--s1); }
+    main { max-width: var(--page-width); margin-inline: auto; padding: var(--s8) var(--s6) var(--s12); }
+    h1, h2, h3 { font-family: var(--serif); line-height: var(--heading-leading); font-weight: 400; }
+    h1 { font-size: clamp(var(--h1-min), 6vw, var(--h1)); max-width: 20ch; margin: 0 0 var(--s6); }
+    h2 { font-size: var(--h2); margin: 0 0 var(--s6); }
+    h3 { font-size: var(--h3); margin: var(--s8) 0 var(--s4); }
+    p { max-width: var(--measure); margin: 0 0 var(--s4); }
+    .note, figcaption, caption, footer { color: var(--muted); font-size: var(--small); }
+    .note strong { color: var(--ink); }
+    header { padding-block: var(--s8); }
+    section { border-top: var(--hairline) solid var(--rule); padding-block: var(--s12); }
+    .section-number { color: var(--accent); font: var(--small)/1 var(--sans); margin-right: var(--s4); }
+    .result { font-size: var(--h3); max-width: var(--measure); margin-bottom: var(--s6); }
+    .result strong { color: var(--accent); }
+    .pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(var(--grid-min), 100%), 1fr));
+      gap: var(--s8); align-items: start; margin-block: var(--s6); }
+    figure { margin: 0; min-width: 0; }
+    svg { display: block; width: 100%; max-width: var(--chart-width); height: auto; background: var(--surface); }
+    svg text { fill: var(--ink); font: 18px var(--sans); }
+    svg .axis { stroke: var(--rule); stroke-width: var(--hairline); fill: none; }
+    svg .data { stroke: var(--accent); stroke-width: var(--stroke); fill: none; }
+    svg .dot, svg .bar { fill: var(--accent); }
+    svg .missing { stroke: var(--rule); stroke-width: var(--hairline); stroke-dasharray: 4 4; }
+    figcaption { margin-top: var(--s4); max-width: var(--measure); }
+    .table-scroll { max-width: 100%; overflow-x: auto; padding: var(--s1);
+      scrollbar-color: var(--rule) var(--surface); }
+    table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; text-align: left; }
+    #cohort-table { min-width: var(--table-min); }
+    caption { text-align: left; padding-bottom: var(--s4); }
+    th, td { border-bottom: var(--hairline) solid var(--rule); padding: var(--s3) var(--s2); vertical-align: top; }
+    thead th { background: var(--surface); font-weight: 600; }
+    td:last-child, th:last-child { text-align: right; }
+    tfoot { font-weight: 600; }
+    label { display: block; font-weight: 600; margin-bottom: var(--s2); }
+    select { min-height: var(--control); padding: var(--s2) var(--s4); border: var(--hairline) solid var(--rule);
+      border-radius: var(--radius); background: var(--surface); color: var(--ink); font: inherit;
+      margin-bottom: var(--s6); cursor: pointer; }
+    select:hover { border-color: var(--accent); }
+    [hidden] { display: none; }
+    footer { border-top: var(--hairline) solid var(--rule); padding-top: var(--s8); }
+    footer p + p { margin-top: var(--s4); }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Rates, gaps and yearly totals</h1>
+    <p>Three small datasets show why a result needs its denominator, its missing intervals and its current population.</p>
+    <p class="note">Authored reference output. All inputs below are <strong>synthetic</strong>; they describe no real people or activity.</p>
+  </header>
+
+  <section aria-labelledby="rate-heading">
+    <h2 id="rate-heading"><span class="section-number">01</span>Combine the attempts</h2>
+    <p class="result"><strong>19 successes / 110 attempts = 17.27%</strong> combined conversion.</p>
+    <p>The denominator includes every attempt in both cohorts. Add successes and attempts separately, then divide. The two cohort percentages have different weights.</p>
+    <div class="table-scroll" role="region" aria-label="Synthetic cohort rates, complete values" tabindex="0">
+      <table id="cohort-table">
+        <caption>Synthetic cohort fixture · counts and conversion rates</caption>
+        <thead><tr><th scope="col">Cohort</th><th scope="col">Successes</th><th scope="col">Attempts</th><th scope="col">Rate</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">A</th><td>9</td><td>10</td><td>90%</td></tr>
+          <tr><th scope="row">B</th><td>10</td><td>100</td><td>10%</td></tr>
+        </tbody>
+        <tfoot><tr><th scope="row">Combined</th><td>19</td><td>110</td><td>17.27%</td></tr></tfoot>
+      </table>
+    </div>
+    <p class="note">Calculation: (9 + 10) / (10 + 100) × 100. The combined rate is rounded to two decimal places; cohort rates are exact. No rows excluded or duplicated. Synthetic source has no observation date or uncertainty estimates.</p>
+  </section>
+
+  <section aria-labelledby="month-heading">
+    <h2 id="month-heading"><span class="section-number">02</span>Keep the missing month</h2>
+    <p>February has 120 units. March has no supplied observation. The gap prevents a claim about the path from February to April.</p>
+    <div class="pair">
+      <figure>
+        <svg viewBox="0 0 360 224" role="img" aria-labelledby="monthly-title monthly-description">
+          <title id="monthly-title">Monthly values, January to April 2026, in units</title>
+          <desc id="monthly-description">January 100, February 120, March missing, April 90. Equal monthly spacing and a zero to 120 units axis. Only January and February are connected; no interpolation across March.</desc>
+          <g class="axis"><path d="M48 32V168H328"/><path d="M44 48H328 M44 108H328"/></g>
+          <g><text x="4" y="28">Units</text><text x="8" y="54">120</text><text x="18" y="114">60</text><text x="28" y="174">0</text></g>
+          <path class="data" d="M56 68L144 48"/>
+          <circle class="dot" cx="56" cy="68" r="5"/><circle class="dot" cx="144" cy="48" r="5"/>
+          <circle class="dot" cx="320" cy="78" r="5"/>
+          <path class="missing" d="M232 32V168"/>
+          <text x="232" y="100" text-anchor="middle">Missing</text>
+          <g text-anchor="middle"><text x="56" y="193">Jan</text><text x="144" y="193">Feb</text><text x="232" y="193">Mar</text><text x="320" y="193">Apr</text><text x="188" y="218">Month of 2026</text></g>
+        </svg>
+        <figcaption>Synthetic monthly fixture. Chronological positions stay equally spaced. A missing observation is neither zero nor an interpolated value.</figcaption>
+      </figure>
+      <div class="table-scroll" role="region" aria-label="Synthetic monthly values, including missing March" tabindex="0">
+        <table id="monthly-table">
+          <caption>Complete monthly values · units</caption>
+          <thead><tr><th scope="col">Month, 2026</th><th scope="col">Value</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">January</th><td>100</td></tr>
+            <tr><th scope="row">February</th><td>120</td></tr>
+            <tr><th scope="row">March</th><td>Missing</td></tr>
+            <tr><th scope="row">April</th><td>90</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <p class="note">Transformation: align three source observations to the declared January–April 2026 calendar, retaining the absent March interval. No imputation or exclusions. These values use a separate population from the cohort and year fixtures.</p>
+  </section>
+
+  <section aria-labelledby="year-heading">
+    <h2 id="year-heading"><span class="section-number">03</span>Change the population</h2>
+    <p>Select a year to update its summary, chart and complete values together. The chart uses the same 0–20 units scale for every observed year.</p>
+    <label for="year">Year</label>
+    <select id="year" aria-controls="year-summary year-chart year-table year-population">
+      <option value="2025" selected>2025</option>
+      <option value="2026">2026</option>
+      <option value="2024">2024 · no observations</option>
+    </select>
+    <p id="year-summary" class="result" role="status" aria-live="polite" aria-atomic="true"><strong>2025: 30 units</strong> across 2 observations.</p>
+    <p id="year-population" class="note">Active filter: year = 2025. 2 of 3 source observations included; 1 excluded by the year filter.</p>
+    <div class="pair">
+      <figure id="year-figure">
+        <svg id="year-chart" viewBox="0 0 360 224" role="img" aria-labelledby="year-chart-title year-chart-description">
+          <title id="year-chart-title">2025 observations in units</title>
+          <desc id="year-chart-description">A: 10 units. B: 20 units. Total: 30 units. Bar lengths start at zero; fixed scale 0 to 20 units.</desc>
+          <g class="axis"><path d="M48 32V168H328"/><path d="M44 48H328 M44 108H328"/></g>
+          <g><text x="4" y="28">Units</text><text x="18" y="54">20</text><text x="18" y="114">10</text><text x="28" y="174">0</text></g>
+          <g id="year-marks">
+            <rect class="bar" x="88" y="108" width="48" height="60"/><text x="112" y="96" text-anchor="middle">10</text><text x="112" y="193" text-anchor="middle">A</text>
+            <rect class="bar" x="232" y="48" width="48" height="120"/><text x="256" y="36" text-anchor="middle">20</text><text x="256" y="193" text-anchor="middle">B</text>
+          </g>
+          <text x="188" y="218" text-anchor="middle">Observation</text>
+        </svg>
+        <figcaption id="year-chart-note">2025 · synthetic observations A and B. Bar labels give exact units.</figcaption>
+        <p id="year-empty" hidden>No observations for 2024. Choose 2025 or 2026 to view supplied values. A measured total is unavailable.</p>
+      </figure>
+      <div class="table-scroll" role="region" aria-label="Selected year, complete synthetic values" tabindex="0">
+        <table id="year-table">
+          <caption id="year-caption">2025 · complete values in units</caption>
+          <thead><tr><th scope="col">Year</th><th scope="col">Observation</th><th scope="col">Value</th></tr></thead>
+          <tbody id="year-rows">
+            <tr><td>2025</td><th scope="row">A</th><td>10</td></tr>
+            <tr><td>2025</td><th scope="row">B</th><td>20</td></tr>
+          </tbody>
+          <tfoot id="year-total-row"><tr><th scope="row" colspan="2">Total</th><td id="year-total">30</td></tr></tfoot>
+        </table>
+      </div>
+    </div>
+    <noscript><p>The initial 2025 view remains readable. JavaScript is needed to change the year; all source values are also listed below.</p></noscript>
+    <h3>Source and calculation</h3>
+    <p class="note">Synthetic year fixture: 2025 A = 10 units; 2025 B = 20 units; 2026 C = 5 units. No 2024 observations were supplied. Filter these three rows by exact year and sum the included values. The empty selection has no measured total; it is not an observation of zero.</p>
+  </section>
+
+  <footer>
+    <p><strong>Source:</strong> authored synthetic cohort, monthly and year fixtures embedded in this document. Calendar labels belong to the fixtures, not a claim of real observation dates. No external data, assets or services are required.</p>
+    <p><strong>Limits and delivery:</strong> illustrative counts and units only; no causal inference, forecasts or confidence intervals. Keep this complete HTML file: its tables, accessible descriptions, transformations and source notes are part of the report. Inspect calculations, filter states, keyboard access, contrast and offline rendering before using a changed copy.</p>
+  </footer>
+</main>
+<script>
+  const sourceRows = Object.freeze([
+    Object.freeze({ year: 2025, label: "A", value: 10 }),
+    Object.freeze({ year: 2025, label: "B", value: 20 }),
+    Object.freeze({ year: 2026, label: "C", value: 5 })
+  ]);
+  const yearSelect = document.getElementById("year");
+  const svgNamespace = "http://www.w3.org/2000/svg";
+
+  function renderYear() {
+    const year = Number(yearSelect.value);
+    const rows = sourceRows.filter(row => row.year === year);
+    const total = rows.reduce((sum, row) => sum + row.value, 0);
+    const empty = rows.length === 0;
+    const summary = document.getElementById("year-summary");
+    const headline = document.createElement("strong");
+    headline.textContent = empty ? `${year}: no observations` : `${year}: ${total} units`;
+    summary.replaceChildren(headline, document.createTextNode(empty
+      ? ". A measured total is unavailable."
+      : ` across ${rows.length} observation${rows.length === 1 ? "" : "s"}.`));
+    document.getElementById("year-population").textContent =
+      `Active filter: year = ${year}. ${rows.length} of ${sourceRows.length} source observations included; ${sourceRows.length - rows.length} excluded by the year filter.`;
+    document.getElementById("year-caption").textContent = `${year} · complete values in units`;
+    const tableRows = rows.map(row => {
+      const tr = document.createElement("tr");
+      const yearCell = document.createElement("td");
+      yearCell.textContent = String(row.year);
+      const labelCell = document.createElement("th");
+      labelCell.scope = "row";
+      labelCell.textContent = row.label;
+      const valueCell = document.createElement("td");
+      valueCell.textContent = String(row.value);
+      tr.append(yearCell, labelCell, valueCell);
+      return tr;
+    });
+    if (empty) {
+      const tr = document.createElement("tr");
+      const cell = document.createElement("td");
+      cell.colSpan = 3;
+      cell.textContent = `No observations for ${year}`;
+      tr.append(cell);
+      tableRows.push(tr);
+    }
+    document.getElementById("year-rows").replaceChildren(...tableRows);
+    document.getElementById("year-total-row").hidden = empty;
+    document.getElementById("year-total").textContent = empty ? "" : String(total);
+    document.getElementById("year-chart").toggleAttribute("hidden", empty);
+    document.getElementById("year-chart-title").textContent = `${year} observations in units`;
+    document.getElementById("year-chart-description").textContent = empty
+      ? `No observations for ${year}. A measured total is unavailable.`
+      : `${rows.map(row => `${row.label}: ${row.value} units`).join(". ")}. Total: ${total} units. Bar lengths start at zero; fixed scale 0 to 20 units.`;
+    const marks = rows.flatMap((row, index) => {
+      const center = rows.length === 1 ? 184 : 112 + index * 144;
+      const top = 168 - row.value * 6;
+      const bar = document.createElementNS(svgNamespace, "rect");
+      for (const [name, value] of Object.entries({ x: center - 24, y: top, width: 48, height: row.value * 6 })) {
+        bar.setAttribute(name, String(value));
+      }
+      bar.setAttribute("class", "bar");
+      const valueLabel = document.createElementNS(svgNamespace, "text");
+      valueLabel.setAttribute("x", String(center));
+      valueLabel.setAttribute("y", String(top - 12));
+      valueLabel.setAttribute("text-anchor", "middle");
+      valueLabel.textContent = String(row.value);
+      const label = document.createElementNS(svgNamespace, "text");
+      label.setAttribute("x", String(center));
+      label.setAttribute("y", "193");
+      label.setAttribute("text-anchor", "middle");
+      label.textContent = row.label;
+      return [bar, valueLabel, label];
+    });
+    document.getElementById("year-marks").replaceChildren(...marks);
+    document.getElementById("year-chart-note").hidden = empty;
+    document.getElementById("year-chart-note").textContent =
+      `${year} · synthetic observation${rows.length === 1 ? "" : "s"} ${rows.map(row => row.label).join(" and ")}. Bar labels give exact units.`;
+    document.getElementById("year-empty").hidden = !empty;
+    document.getElementById("year-empty").textContent =
+      `No observations for ${year}. Choose 2025 or 2026 to view supplied values. A measured total is unavailable.`;
+  }
+  yearSelect.addEventListener("change", renderYear);
+  renderYear();
+</script>
+</body>
+</html>
